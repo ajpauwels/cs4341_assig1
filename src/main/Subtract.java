@@ -10,7 +10,6 @@ public class Subtract extends Operation {
 		super(opVal);
 	}
 
-	@Override
 	/**
 	 * Subtracts the class's static value from the given value
 	 * 
@@ -18,6 +17,7 @@ public class Subtract extends Operation {
 	 * 
 	 * @return The sum
 	 */
+	@Override
 	public int execute(int searchVal) {
 		return searchVal - this.value;
 	}

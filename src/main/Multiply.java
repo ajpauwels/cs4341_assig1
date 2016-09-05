@@ -10,7 +10,6 @@ public class Multiply extends Operation {
 		super(opVal);
 	}
 
-	@Override
 	/**
 	 * Multiplies the given value by the class's static value
 	 * 
@@ -18,6 +17,7 @@ public class Multiply extends Operation {
 	 * 
 	 * @return The product
 	 */
+	@Override
 	public int execute(int searchVal) {
 		return searchVal * this.value;
 	}

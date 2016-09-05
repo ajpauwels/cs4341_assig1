@@ -10,7 +10,6 @@ public class RaiseToPower extends Operation {
 		super(opVal);
 	}
 
-	@Override
 	/**
 	 * Raises the given value to the power of the class's value
 	 * 
@@ -18,6 +17,7 @@ public class RaiseToPower extends Operation {
 	 * 
 	 * @return The product
 	 */
+	@Override
 	public int execute(int searchVal) {
 		return (int)Math.pow(searchVal, this.value);
 	}

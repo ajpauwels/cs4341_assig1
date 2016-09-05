@@ -10,7 +10,6 @@ public class Divide extends Operation {
 		super(opVal);
 	}
 
-	@Override
 	/**
 	 * Divides the given value by the class's static value
 	 * 
@@ -18,6 +17,7 @@ public class Divide extends Operation {
 	 * 
 	 * @return The quotient
 	 */
+	@Override
 	public int execute(int searchVal) {
 		return searchVal / this.value;
 	}

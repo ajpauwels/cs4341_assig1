@@ -10,7 +10,6 @@ public class Add extends Operation {
 		super(opVal);
 	}
 
-	@Override
 	/**
 	 * Adds the given value to the class's static value
 	 * 
@@ -18,6 +17,7 @@ public class Add extends Operation {
 	 * 
 	 * @return The sum
 	 */
+	@Override
 	public int execute(int searchVal) {
 		return searchVal + this.value;
 	}

@@ -123,7 +123,6 @@ public class Configuration {
 	 * Returns the array of operations allowed for the search
 	 * 
 	 * @return An array of operations
-	 * @return
 	 */
 	public ArrayList<Operation> getOperations() {
 		return this.ops;
