@@ -1,5 +1,7 @@
 package main;
 
+import java.util.ArrayList;
+
 public class Search {
 
 	/**
@@ -13,6 +15,17 @@ public class Search {
 		
 		// Instantiate the configuration object to define the search
 		Configuration config = new Configuration(fileName);
+		
+		// Testing information gathering
+		System.out.println("[INFO] Type: " + config.getType() + ", Begin: " + config.getBeginVal() + ", End: " + config.getEndVal() + ", Time limit: " + config.getTimeLimit());
+		
+		ArrayList<Operation> ops = config.getOperations();
+		
+		System.out.println("[INFO] 2 + 3: " + ops.get(0).execute(2));
+		System.out.println("[INFO] 2 - 1: " + ops.get(1).execute(2));
+		System.out.println("[INFO] 2 / 2: " + ops.get(2).execute(2));
+		System.out.println("[INFO] 2 * 5: " + ops.get(3).execute(2));
+		System.out.println("[INFO] 2 ^ 2: " + ops.get(4).execute(2));
 	}
 
 }
