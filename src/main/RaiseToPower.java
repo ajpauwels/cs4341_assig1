@@ -21,4 +21,9 @@ public class RaiseToPower extends Operation {
 	public int execute(int searchVal) {
 		return (int)Math.pow(searchVal, this.value);
 	}
+	
+	@Override
+	public String toString() {
+		return "^ " + value;
+	}
 }
