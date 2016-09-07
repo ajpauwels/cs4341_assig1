@@ -35,7 +35,6 @@ public class IterativeDeepening {
 			int result = op.execute(val);
 			
 			if (result == setup.getEndVal()) {
-				System.out.println("[INFO] Result = " + result + ", Val = " + val + ", Operation: " + op.toString());
 				ArrayList<Operation> successfulOp = new ArrayList<Operation>();
 				successfulOp.add(op);
 				return successfulOp;
