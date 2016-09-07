@@ -21,7 +21,10 @@ public abstract class Operation {
 	}
 	
 	public abstract int execute(int searchVal);
-	
+
+	/**
+	 * Prints out the operator and the number
+	 */
 	@Override
 	public abstract String toString();
 }

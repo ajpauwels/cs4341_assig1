@@ -17,10 +17,9 @@ public class Search {
 		Configuration config = new Configuration(fileName);
 		
 		// Testing information gathering
-		//System.out.println("[INFO] Type: " + config.getType() + ", Begin: " + config.getBeginVal() + ", End: " + config.getEndVal() + ", Time limit: " + config.getTimeLimit());
+		// System.out.println("[INFO] Type: " + config.getType() + ", Begin: " + config.getBeginVal() + ", End: " + config.getEndVal() + ", Time limit: " + config.getTimeLimit());
 		
-		ArrayList<Operation> ops = config.getOperations();
-		
+//		ArrayList<Operation> ops = config.getOperations();
 //		System.out.println("[INFO] 2 + 3: " + ops.get(0).execute(2));
 //		System.out.println("[INFO] 2 - 1: " + ops.get(1).execute(2));
 //		System.out.println("[INFO] 2 / 2: " + ops.get(2).execute(2));

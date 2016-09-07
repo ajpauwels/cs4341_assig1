@@ -6,14 +6,14 @@ import java.util.Date;
 public class Greedy {
 
 	public Greedy(Configuration config) {
-		ArrayList<Operation> opsHistory = new ArrayList<Operation>();
+		ArrayList<Operation> opsHistory = new ArrayList<Operation>(); //operations used to reach goal
 
-		int currentVal = config.getBeginVal();
+		int currentVal = config.getBeginVal(); //value of current node being expanded
 		
-		double startTime = (new Date()).getTime();
+		double startTime = (new Date()).getTime(); //used for timer
 		
-		while (true) {
-			if ((new Date()).getTime() - startTime > config.getTimeLimit() * 1000) {
+		while (true) { //runs until time has run out or solution has been found
+			if ((new Date()).getTime() - startTime > config.getTimeLimit() * 1000) { //check to make sure time has not run out
 				System.out.println("[INFO] Time has run out! Last value: " + currentVal);
 				break;
 			}
@@ -21,10 +21,10 @@ public class Greedy {
 			int tempVal = Integer.MAX_VALUE; //this way the heuristic for the first operation will always be less
 			Operation tempOp = config.getOperations().get(0);
 			
-			for (Operation op : config.getOperations()) {
+			for (Operation op : config.getOperations()) { //check each operation
 				int val = op.execute(currentVal);
 				
-				if (Math.abs(val - config.getEndVal()) < Math.abs(tempVal - config.getEndVal())) {
+				if (Math.abs(val - config.getEndVal()) < Math.abs(tempVal - config.getEndVal())) { //if operation has better heuristic than previous, set tempOp to op
 					tempVal = val;
 					tempOp = op;
 				}
@@ -35,7 +35,7 @@ public class Greedy {
 			currentVal = tempVal;
 			opsHistory.add(tempOp);
 			
-			if (currentVal == config.getEndVal()) {
+			if (currentVal == config.getEndVal()) { //if goal has been reached
 				System.out.println("Hooray we reached the goal!");
 				System.out.println("Time taken: " + (((new Date()).getTime() - startTime) / 1000) + " sec");
 				System.out.println("Nodes expanded: " + opsHistory.size());
