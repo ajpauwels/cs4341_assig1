@@ -4,31 +4,52 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class IterativeDeepening {
-	private int level;
 	private Configuration setup;
 	
 	public IterativeDeepening(Configuration config) {
 		this.setup = config;
 	}
 	
-	public boolean run() {
-		Date start = new Date();
-		level = 0;
+	public ArrayList<Operation> run() {
+//		Date start = new Date();
+//		Date end = new Date();
+		int limit = 0;
 		
-		return false;
+		if (setup.getBeginVal() == setup.getEndVal()) {
+			return new ArrayList<Operation>();
+		} else {
+			ArrayList<Operation> result = new ArrayList<Operation>();
+			
+			while (result.size() == 0) {
+				limit++;
+				result = loop(setup.getBeginVal(), limit);
+			}
+			
+			return result;
+		}
 	}
 	
-	private Operation loop(int val) {
+	private ArrayList<Operation> loop(int val, int limit) {
 		ArrayList<Operation> ops = setup.getOperations();
 		
 		for (Operation op : ops) {
 			int result = op.execute(val);
 			
 			if (result == setup.getEndVal()) {
-				return op;
+				ArrayList<Operation> successfulOp = new ArrayList<Operation>();
+				successfulOp.add(op);
+				return successfulOp;
+			} else {
+				if (limit > 1) {
+					ArrayList<Operation> opSequence = loop(result, limit - 1);
+					if (opSequence.size() > 0) {
+						opSequence.add(op);
+						return opSequence;
+					}
+				}
 			}
 		}
 		
-		return null;
+		return new ArrayList<Operation>();
 	}
 }
