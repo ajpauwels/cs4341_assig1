@@ -21,4 +21,9 @@ public class Subtract extends Operation {
 	public int execute(int searchVal) {
 		return searchVal - this.value;
 	}
+	
+	@Override
+	public String toString() {
+		return "- " + value;
+	}
 }
