@@ -21,4 +21,7 @@ public abstract class Operation {
 	}
 	
 	public abstract int execute(int searchVal);
+
+	@Override
+	public abstract String toString();
 }
