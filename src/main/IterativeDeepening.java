@@ -1,54 +1,86 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class IterativeDeepening {
+	private int iterativeDepth; //holds the current maximum search depth
+	
+	private ArrayList<Operation> currentPath; //stores the current sequence of operations
+	
+	private Integer runningBestResult;
+	private ArrayList<Operation> runningBestPath;
+	
 	private Configuration setup;
+	
+	private boolean resultFound = false;
 	
 	public IterativeDeepening(Configuration config) {
 		this.setup = config;
+		currentPath = new ArrayList<Operation>();
+		runningBestPath = new ArrayList<Operation>();
 	}
 	
-	public ArrayList<Operation> run() {
-//		Date start = new Date();
-//		Date end = new Date();
-		int limit = 0;
+	/**
+	 * Run the iterative depth first search algorithm
+	 */
+	
+	public boolean run() {
+		Date start = new Date();
+		Date end = new Date();
+		iterativeDepth = 1;
 		
-		if (setup.getBeginVal() == setup.getEndVal()) {
-			return new ArrayList<Operation>();
-		} else {
-			ArrayList<Operation> result = new ArrayList<Operation>();
+		//while time has not run out and result hasn't been found
+		while(end.getTime() - start.getTime() < setup.getTimeLimit()*1000 && !resultFound){
 			
-			while (result.size() == 0) {
-				limit++;
-				result = loop(setup.getBeginVal(), limit);
+			if( loop(setup.getBeginVal(), 0) == setup.getEndVal() ){ //run the recursive loop
+					resultFound = true;
 			}
-			
-			return result;
+		
+			iterativeDepth++;
+			end = new Date();
 		}
+
+		//print out the results
+		System.out.println("Result: " + runningBestResult);
+		System.out.println("HERES THE PATH");
+		for(int i = 0; i < runningBestPath.size(); i++){
+			System.out.println(runningBestPath.get(i).value);
+		}
+		
+		return false;
 	}
 	
-	private ArrayList<Operation> loop(int val, int limit) {
+	/**
+	 * recursive depth first search
+	 * @param val	Value of the current node
+	 * @param currentDepth	current depth of the tree, incremented by one 
+	 * 						each time the function is called recursively  
+	 */
+	private int loop(int val, int currentDepth) {
 		ArrayList<Operation> ops = setup.getOperations();
 		
 		for (Operation op : ops) {
 			int result = op.execute(val);
 			
-			if (result == setup.getEndVal()) {
-				ArrayList<Operation> successfulOp = new ArrayList<Operation>();
-				successfulOp.add(op);
-				return successfulOp;
-			} else {
-				if (limit > 1) {
-					ArrayList<Operation> opSequence = loop(result, limit - 1);
-					if (opSequence.size() > 0) {
-						opSequence.add(op);
-						return opSequence;
-					}
-				}
+			currentPath.add(op);
+			
+			//update the running best result and path
+			if(runningBestResult == null || Math.abs(setup.getEndVal() - result) < Math.abs(setup.getEndVal() - runningBestResult)){
+				runningBestResult = result;
+				runningBestPath = (ArrayList<Operation>) currentPath.clone();
 			}
+			
+			if (result == setup.getEndVal()) {
+				resultFound = true;
+				return result;
+			}else if(currentDepth < iterativeDepth){ //if not at result, and not past max iterative depth, recurse into next node
+				loop(result, ++currentDepth);
+			}
+			
+			currentPath.remove(currentPath.size()-1); //remove the last operation added to the node to keep current path up to date
 		}
 		
-		return new ArrayList<Operation>();
+		return 0;
 	}
 }
