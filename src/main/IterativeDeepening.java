@@ -15,6 +15,9 @@ public class IterativeDeepening {
 	
 	private boolean resultFound = false;
 	
+	private int numberOfNodes = 0;
+	private int maxDepth = 0;
+	
 	public IterativeDeepening(Configuration config) {
 		this.setup = config;
 		currentPath = new ArrayList<Operation>();
@@ -31,7 +34,7 @@ public class IterativeDeepening {
 		iterativeDepth = 1;
 		
 		//while time has not run out and result hasn't been found
-		while(end.getTime() - start.getTime() < setup.getTimeLimit()*1000 && !resultFound){
+		while(end.getTime() - start.getTime() < setup.getTimeLimit() && !resultFound){
 			
 			if( loop(setup.getBeginVal(), 0) == setup.getEndVal() ){ //run the recursive loop
 					resultFound = true;
@@ -42,11 +45,19 @@ public class IterativeDeepening {
 		}
 
 		//print out the results
-		System.out.println("Result: " + runningBestResult);
-		System.out.println("HERES THE PATH");
-		for(int i = 0; i < runningBestPath.size(); i++){
-			System.out.println(runningBestPath.get(i).value);
+		int tempVal = setup.getBeginVal();
+		for(Operation op: runningBestPath){
+			System.out.println(tempVal + " " + op.toString() + " = " + op.execute(tempVal));
+			tempVal = op.execute(tempVal);
 		}
+		System.out.println("\nError: " + (Math.abs(runningBestResult - setup.getEndVal())));
+		System.out.println("Number of steps required: " + runningBestPath.size());
+		System.out.println("Search required: " + (((end).getTime() - start.getTime()) / 1000.0 ));
+		System.out.println("Nodes expanded: " + numberOfNodes);
+		System.out.println("Maximum search depth: " + (maxDepth+1));
+		
+		
+		
 		
 		return false;
 	}
@@ -61,6 +72,8 @@ public class IterativeDeepening {
 		ArrayList<Operation> ops = setup.getOperations();
 		
 		for (Operation op : ops) {
+			numberOfNodes++;
+			
 			int result = op.execute(val);
 			
 			currentPath.add(op);
@@ -75,6 +88,7 @@ public class IterativeDeepening {
 				resultFound = true;
 				return result;
 			}else if(currentDepth < iterativeDepth){ //if not at result, and not past max iterative depth, recurse into next node
+				if ( currentDepth > maxDepth) maxDepth = currentDepth;
 				loop(result, ++currentDepth);
 			}
 			
