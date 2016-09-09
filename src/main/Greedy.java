@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Greedy {
+	
+	private Configuration config;
 
 	public Greedy(Configuration config) {
+		this.config = config;
+	}
+	
+	public void run() {
 		ArrayList<Operation> opsHistory = new ArrayList<Operation>(); //operations used to reach goal
 
 		int currentVal = config.getBeginVal(); //value of current node being expanded

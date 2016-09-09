@@ -19,14 +19,14 @@ public class Search {
 		// Testing information gathering
 		//System.out.println("[INFO] Type: " + "" + config.getType() + ", Begin: " + config.getBeginVal() + ", End: " + config.getEndVal() + ", Time limit: " + config.getTimeLimit());
 		
-		ArrayList<Operation> ops = config.getOperations();
+		//ArrayList<Operation> ops = config.getOperations();
 		
-		if(config.getType() == 0){
+		if(config.getType() == Configuration.ITERATIVE){
 			IterativeDeepening search = new IterativeDeepening(config);
-			
 			search.run();
 		}else{
 			Greedy search = new Greedy(config);
+			search.run();
 		}
 	}
 

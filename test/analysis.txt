@@ -1,0 +1,13 @@
+CS4341 Assignment 1
+Ethan Coeytaux
+Alexandre Pauwels
+Erik Sola
+Hugh Whelan
+
+On average (given our 5 test examples) the iterative search was able to find a solution faster than the best-first search.
+This was however not the case when the iterative search could not find  the answer in time due to a large branching factor.
+Best-first search was also not able to find the most efficient path all of the time.
+
+Test 2 is an example of where best-first search finds a solution when iterative cannot find one in time.
+Test 3 is an example of where best-first search finds a solution but not an optimal one, however iterative search does.
+Test 4 is an example of where best-first search gets caught in a loop.

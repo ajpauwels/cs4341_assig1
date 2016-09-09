@@ -47,7 +47,6 @@ public class IterativeDeepening {
 			iterativeDepth++;
 		}
 		
-		System.out.println(end.getTime() - start.getTime());
 		if(end.getTime() - start.getTime() > setup.getTimeLimit() * 1000){
 			System.out.println("RAN OUT OF TIME");
 		}
