@@ -44,7 +44,7 @@ public class Configuration {
 			while ((line = br.readLine()) != null) {
 				Operation op;
 				String opStr = line.substring(0, 1);
-				String valStr = line.substring(1, 2);
+				String valStr = line.substring(1);
 				int val = Integer.parseInt(valStr);
 				
 				if (opStr.equals(Operation.ADD)) {

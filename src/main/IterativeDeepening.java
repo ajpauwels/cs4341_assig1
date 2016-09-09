@@ -34,7 +34,7 @@ public class IterativeDeepening {
 		iterativeDepth = 1;
 		
 		//while time has not run out and result hasn't been found
-		while(end.getTime() - start.getTime() < setup.getTimeLimit() && !resultFound){
+		while(end.getTime() - start.getTime() < setup.getTimeLimit() * 1000 && !resultFound){
 			
 			if( loop(setup.getBeginVal(), 0) == setup.getEndVal() ){ //run the recursive loop
 					resultFound = true;
@@ -52,7 +52,7 @@ public class IterativeDeepening {
 		}
 		System.out.println("\nError: " + (Math.abs(runningBestResult - setup.getEndVal())));
 		System.out.println("Number of steps required: " + runningBestPath.size());
-		System.out.println("Search required: " + (((end).getTime() - start.getTime()) / 1000.0 ));
+		System.out.println("Search required: " + ((end.getTime() - start.getTime()) / 1000.0 ));
 		System.out.println("Nodes expanded: " + numberOfNodes);
 		System.out.println("Maximum search depth: " + (maxDepth+1));
 		

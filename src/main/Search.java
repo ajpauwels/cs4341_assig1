@@ -17,8 +17,7 @@ public class Search {
 		Configuration config = new Configuration(fileName);
 		
 		// Testing information gathering
-		System.out.println("[INFO] Type: "
-				+ "" + config.getType() + ", Begin: " + config.getBeginVal() + ", End: " + config.getEndVal() + ", Time limit: " + config.getTimeLimit());
+		//System.out.println("[INFO] Type: " + "" + config.getType() + ", Begin: " + config.getBeginVal() + ", End: " + config.getEndVal() + ", Time limit: " + config.getTimeLimit());
 		
 		ArrayList<Operation> ops = config.getOperations();
 		
