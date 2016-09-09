@@ -36,11 +36,15 @@ public class Greedy {
 			opsHistory.add(tempOp);
 			
 			if (currentVal == config.getEndVal()) { //if goal has been reached
-				System.out.println("Hooray we reached the goal!");
-				System.out.println("Time taken: " + (((new Date()).getTime() - startTime) / 1000) + " sec");
-				System.out.println("Nodes expanded: " + opsHistory.size());
-				return;
+				break;
 			}
 		}
+		
+		System.out.println("\nError: " + Math.abs(config.getEndVal() - currentVal));
+		System.out.println("Number of steps required: " + opsHistory.size());
+		System.out.println("Search required: " + (((new Date()).getTime() - startTime) / 1000) + " sec");
+		System.out.println("Nodes expanded: " + opsHistory.size());
+		System.out.println("Maximum search depth: " + opsHistory.size());
+		return;
 	}
 }
