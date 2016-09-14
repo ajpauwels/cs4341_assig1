@@ -40,7 +40,7 @@ public class IterativeDeepening {
 		//while time has not run out and result hasn't been found
 		while(end.getTime() - start.getTime() < setup.getTimeLimit() * 1000 && !resultFound){
 			
-			if( loop(setup.getBeginVal(), 0) == setup.getEndVal() ){ //run the recursive loop
+			if( loop((int)setup.getBeginVal(), 0) == (int)setup.getEndVal() ){ //run the recursive loop
 					resultFound = true;
 			}
 		
@@ -52,10 +52,10 @@ public class IterativeDeepening {
 		}
 
 		//print out the results
-		int tempVal = setup.getBeginVal();
+		int tempVal = (int)setup.getBeginVal();
 		for(Operation op: runningBestPath){
 			System.out.println(tempVal + " " + op.toString() + " = " + op.execute(tempVal));
-			tempVal = op.execute(tempVal);
+			tempVal = (int)op.execute(tempVal);
 		}
 		System.out.println("\nError: " + (Math.abs(runningBestResult - setup.getEndVal())));
 		System.out.println("Number of steps required: " + runningBestPath.size());
@@ -78,7 +78,7 @@ public class IterativeDeepening {
 		for (Operation op : ops) {
 			numberOfNodes++;
 			
-			int result = op.execute(val);
+			int result = (int)op.execute(val);
 			
 			currentPath.add(op);
 			

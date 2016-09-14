@@ -9,18 +9,18 @@ public abstract class Operation {
 	static final public String POWER = "^";
 	
 	// The sub-classed operation will be performed on a given number and this value
-	protected int value;
+	protected double value;
 	
 	/**
 	 * Constructor simply sets the given value to be the static half of the operation
 	 * 
 	 * @param opVal Value to operate with
 	 */
-	public Operation(int opVal) {
+	public Operation(double opVal) {
 		this.value = opVal;
 	}
 	
-	public abstract int execute(int searchVal);
+	public abstract double execute(double searchVal);
 
 	@Override
 	public abstract String toString();

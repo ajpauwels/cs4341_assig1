@@ -6,7 +6,7 @@ public class Divide extends Operation {
 	 * 
 	 * @param opVal Super-constructor argument
 	 */
-	public Divide(int opVal) {
+	public Divide(double opVal) {
 		super(opVal);
 	}
 
@@ -18,7 +18,7 @@ public class Divide extends Operation {
 	 * @return The quotient
 	 */
 	@Override
-	public int execute(int searchVal) {
+	public double execute(double searchVal) {
 		return searchVal / this.value;
 	}
 	

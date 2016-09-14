@@ -6,7 +6,7 @@ public class RaiseToPower extends Operation {
 	 * 
 	 * @param opVal Super-constructor argument
 	 */
-	public RaiseToPower(int opVal) {
+	public RaiseToPower(double opVal) {
 		super(opVal);
 	}
 
@@ -18,8 +18,8 @@ public class RaiseToPower extends Operation {
 	 * @return The product
 	 */
 	@Override
-	public int execute(int searchVal) {
-		return (int)Math.pow(searchVal, this.value);
+	public double execute(double searchVal) {
+		return (double)Math.pow(searchVal, this.value);
 	}
 	
 	@Override

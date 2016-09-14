@@ -6,7 +6,7 @@ public class Multiply extends Operation {
 	 * 
 	 * @param opVal Super-constructor argument
 	 */
-	public Multiply(int opVal) {
+	public Multiply(double opVal) {
 		super(opVal);
 	}
 
@@ -18,7 +18,7 @@ public class Multiply extends Operation {
 	 * @return The product
 	 */
 	@Override
-	public int execute(int searchVal) {
+	public double execute(double searchVal) {
 		return searchVal * this.value;
 	}
 

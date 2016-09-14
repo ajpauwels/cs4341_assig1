@@ -24,9 +24,14 @@ public class Search {
 		if(config.getType() == Configuration.ITERATIVE){
 			IterativeDeepening search = new IterativeDeepening(config);
 			search.run();
-		}else{
+		}else if(config.getType() == Configuration.GREEDY){
 			Greedy search = new Greedy(config);
 			search.run();
+		}else if(config.getType() == Configuration.GENETIC){
+			Genetic search = new Genetic(config);
+			search.run();
+		}else{
+			System.out.println("[ERROR] Unrecognizable type found in file");
 		}
 	}
 

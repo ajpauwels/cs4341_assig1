@@ -10,10 +10,11 @@ public class Configuration {
 	// Static ints identify the type of the search
 	public final static int ITERATIVE = 0;
 	public final static int GREEDY = 1;
+	public final static int GENETIC = 2;
 	
 	// Instance variables
 	private int type;
-	private int begin, end;
+	private double begin, end;
 	private double timeLimit;
 	private ArrayList<Operation> ops;
 	
@@ -35,9 +36,9 @@ public class Configuration {
 			String line = br.readLine();
 			
 			// Read config parameters in
-			type = (line.equals("iterative") ? Configuration.ITERATIVE : Configuration.GREEDY);
-			begin = Integer.parseInt(br.readLine());
-			end = Integer.parseInt(br.readLine());
+			type = (line.equals("iterative") ? Configuration.ITERATIVE : (line.equals("greedy") ? Configuration.GREEDY : Configuration.GENETIC));
+			begin = Double.parseDouble(br.readLine());
+			end = Double.parseDouble(br.readLine());
 			timeLimit = Double.parseDouble(br.readLine());
 			
 			// Read operations in
@@ -45,7 +46,7 @@ public class Configuration {
 				Operation op;
 				String opStr = line.substring(0, 1);
 				String valStr = line.substring(1);
-				int val = Integer.parseInt(valStr);
+				double val = Double.parseDouble(valStr);
 				
 				if (opStr.equals(Operation.ADD)) {
 					op = new Add(val);
@@ -102,7 +103,7 @@ public class Configuration {
 	 * 
 	 * @return An int representing the begin value
 	 */
-	public int getBeginVal() {
+	public double getBeginVal() {
 		return this.begin;
 	}
 	
@@ -111,7 +112,7 @@ public class Configuration {
 	 * 
 	 * @return An int representing the end value
 	 */
-	public int getEndVal() {
+	public double getEndVal() {
 		return this.end;
 	}
 	

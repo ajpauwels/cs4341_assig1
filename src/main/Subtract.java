@@ -6,7 +6,7 @@ public class Subtract extends Operation {
 	 * 
 	 * @param opVal Super-constructor argument
 	 */
-	public Subtract(int opVal) {
+	public Subtract(double opVal) {
 		super(opVal);
 	}
 
@@ -18,7 +18,7 @@ public class Subtract extends Operation {
 	 * @return The sum
 	 */
 	@Override
-	public int execute(int searchVal) {
+	public double execute(double searchVal) {
 		return searchVal - this.value;
 	}
 	

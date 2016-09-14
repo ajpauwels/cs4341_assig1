@@ -14,7 +14,7 @@ public class Greedy {
 	public void run() {
 		ArrayList<Operation> opsHistory = new ArrayList<Operation>(); //operations used to reach goal
 
-		int currentVal = config.getBeginVal(); //value of current node being expanded
+		int currentVal = (int)config.getBeginVal(); //value of current node being expanded
 		
 		double startTime = (new Date()).getTime(); //used for timer
 		
@@ -28,7 +28,7 @@ public class Greedy {
 			Operation tempOp = config.getOperations().get(0);
 			
 			for (Operation op : config.getOperations()) { //check each operation
-				int val = op.execute(currentVal);
+				int val = (int)op.execute(currentVal);
 				
 				if (Math.abs(val - config.getEndVal()) < Math.abs(tempVal - config.getEndVal())) { //if operation has better heuristic than previous, set tempOp to op
 					tempVal = val;
