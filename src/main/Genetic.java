@@ -39,7 +39,8 @@ public class Genetic {
 			for (Operation op : ops) {
 				proximity = op.execute(proximity);
 			}
-			fitness = (proximity * ops.size()) + ops.size();
+			proximity = Math.abs(config.getEndVal() - proximity);
+			fitness = 1 / (proximity + ops.size());
 		}
 		
 		public void mutate() {
@@ -58,6 +59,13 @@ public class Genetic {
 			}
 			
 			calculateFitness();
+		}
+		
+		public Organism spawn(Organism mate) {
+			//TODO this needs a crossover function
+			Organism ret = new Organism(config, ops);
+			ret.mutate();
+			return ret;
 		}
 		
 		@Override
@@ -85,7 +93,7 @@ public class Genetic {
 	}
 	
 	public void run() {
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 5; i++) {
 			System.out.println("\n[INFO] new generation");
 			ArrayList<Organism> newGen = new ArrayList<Organism>();
 			for (Organism org : population) {
@@ -105,6 +113,9 @@ public class Genetic {
 				System.out.println(org.fitness);
 			}
 		}
+		
+		System.out.println("\nBest organism: " + best.toString());
+		System.out.println(best.fitness);
 	}
 	
 	private void initPopulation(Configuration config) {
