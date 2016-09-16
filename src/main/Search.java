@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Search {
 
@@ -16,14 +17,14 @@ public class Search {
 		// Instantiate the configuration object to define the search
 		Configuration config = new Configuration(fileName);
 		
-		// Testing information gathering
-		//System.out.println("[INFO] Type: " + "" + config.getType() + ", Begin: " + config.getBeginVal() + ", End: " + config.getEndVal() + ", Time limit: " + config.getTimeLimit());
-		
-		//ArrayList<Operation> ops = config.getOperations();
-		
 		if(config.getType() == Configuration.ITERATIVE){
 			IterativeDeepening search = new IterativeDeepening(config);
 			search.run();
+//			ArrayList<Operation> results = search.run();
+//			Collections.reverse(results);
+//			for (Operation op : results) {
+//				System.out.println(config.getBeginVal() + " " + op.toString() + " = " + op.execute(config.getBeginVal()));
+//			}
 		}else if(config.getType() == Configuration.GREEDY){
 			Greedy search = new Greedy(config);
 			search.run();

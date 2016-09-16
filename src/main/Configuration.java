@@ -82,10 +82,6 @@ public class Configuration {
 		
 		System.out.println("[INFO] Successfully read in search file");
 		System.out.println("[INFO] Type: " + type + ", Begin: " + begin + ", End: " + end + ", Time limit: " + timeLimit);
-
-//		if (type == GREEDY) {
-//			new Greedy(this);
-//		}
 	}
 	
 	/**

@@ -8,7 +8,7 @@ public class IterativeDeepening {
 	
 	private ArrayList<Operation> currentPath; //stores the current sequence of operations
 	
-	private Integer runningBestResult;
+	private Double runningBestResult;
 	private ArrayList<Operation> runningBestPath;
 	
 	private Configuration setup;
@@ -72,17 +72,19 @@ public class IterativeDeepening {
 	 * @param currentDepth	current depth of the tree, incremented by one 
 	 * 						each time the function is called recursively  
 	 */
-	private int loop(int val, int currentDepth) {
+	private ArrayList<Operation> loop(double val, int currentDepth) {
+		// Get the allowed operations
 		ArrayList<Operation> ops = setup.getOperations();
 		
+		// Loop through each one individually
 		for (Operation op : ops) {
+			// Get the result of computation and increase number of nodes expanded
+			double result = op.execute(val);
 			numberOfNodes++;
-			
-			int result = (int)op.execute(val);
 			
 			currentPath.add(op);
 			
-			//update the running best result and path
+			// Update the running best result if the new result is better
 			if(runningBestResult == null || Math.abs(setup.getEndVal() - result) < Math.abs(setup.getEndVal() - runningBestResult)){
 				runningBestResult = result;
 				runningBestPath = (ArrayList<Operation>) currentPath.clone();
@@ -92,8 +94,10 @@ public class IterativeDeepening {
 			end = new Date();
 			
 			if (result == setup.getEndVal()) {
-				resultFound = true;
-				return result;
+				ArrayList<Operation> successfulOp = new ArrayList<Operation>();
+				successfulOp.add(op);
+//				resultFound = true;
+				return successfulOp;
 			}else if(currentDepth < iterativeDepth && ((end.getTime() - start.getTime() < setup.getTimeLimit()*1000))){ //if not at result, and not past max iterative depth, recurse into next node
 				if ( currentDepth > maxDepth) maxDepth = currentDepth;
 				loop(result, ++currentDepth);
