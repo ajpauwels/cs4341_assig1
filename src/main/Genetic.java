@@ -61,11 +61,47 @@ public class Genetic {
 			calculateFitness();
 		}
 		
-		public Organism spawn(Organism mate) {
-			//TODO this needs a crossover function
-			Organism ret = new Organism(config, ops);
-			ret.mutate();
-			return ret;
+		public ArrayList<Organism> spawn(Organism mate) {
+			// Creates the two new children as copies of the parents initially
+			Organism child1 = new Organism(this.config, this.ops);
+			Organism child2 = new Organism(mate.config, mate.ops);
+			
+			// Initializes the random number generator and retrieves organism sizes
+			Random randGen = new Random();
+			int orgSize = this.ops.size();
+			int mateSize = mate.ops.size();
+			
+			// Generates cross-over points, the points are both inclusive e.g. 4 is the 5th item in the array
+			int crossOrg1 = randGen.nextInt(orgSize - 1);
+			int crossOrg2 = randGen.nextInt((orgSize - 1) - crossOrg1) + (orgSize - 2);
+			
+			int crossMate1 = randGen.nextInt(mateSize - 1);
+			int crossMate2 = randGen.nextInt((mateSize - 1) - crossMate1) + (mateSize - 2);
+			
+			// Retrieves the subsets of operations from the generated cross-overs and deletes them from children
+			ArrayList<Operation> subsetOrg = new ArrayList<Operation>();
+			ArrayList<Operation> subsetMate = new ArrayList<Operation>();
+			
+			for (int i = crossOrg1; i <= crossOrg2; ++i) {
+				subsetOrg.add(this.ops.get(i));
+				child1.ops.remove(i);
+			}
+			
+			for (int i = crossMate1; i <= crossMate2; ++i) {
+				subsetMate.add(mate.ops.get(i));
+				child2.ops.remove(i);
+			}
+			
+			// Splice subsets into the children
+			child1.ops.addAll(crossOrg1, subsetMate);
+			child2.ops.addAll(crossMate1, subsetOrg);
+			
+			// Create an array to hold the children and return
+			ArrayList<Organism> children = new ArrayList<Organism>();
+			children.add(child1);
+			children.add(child2);
+			
+			return children;
 		}
 		
 		@Override
