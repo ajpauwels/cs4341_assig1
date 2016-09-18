@@ -1,6 +1,7 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 public class Genetic {
@@ -40,7 +41,7 @@ public class Genetic {
 				proximity = op.execute(proximity);
 			}
 			proximity = Math.abs(config.getEndVal() - proximity);
-			fitness = 1 / (proximity + ops.size());
+			fitness = 100.0 / ((proximity * ops.size()) + ops.size());
 		}
 		
 		public void mutate() {
@@ -55,6 +56,7 @@ public class Genetic {
 				ops.add(config.getOperations().get(random.nextInt(config.getOperations().size()))); //adds random new operation to ops
 			} else { //1 third chance
 				//remove operation
+				//TODO this should not allow organism to shrink to size 0...or should it?
 				ops.remove(ops.size() - 1); //removes last op
 			}
 			
@@ -87,13 +89,14 @@ public class Genetic {
 
 	Genetic(Configuration config) {
 		this.config = config;
-		
-		population = new ArrayList<Organism>();
-		initPopulation(config);
 	}
 	
 	public void run() {
-		for (int i = 0; i < 5; i++) {
+		double startTime = (new Date()).getTime(); //used for timer
+		
+		initPopulation(config);
+		
+		for (int i = 0; i < 6; i++) {
 			System.out.println("\n[INFO] new generation");
 			ArrayList<Organism> newGen = new ArrayList<Organism>();
 			for (Organism org : population) {
@@ -119,6 +122,8 @@ public class Genetic {
 	}
 	
 	private void initPopulation(Configuration config) {
+		population = new ArrayList<Organism>();
+		
 		for (int i = 0; i < 1; i++) {
 			Organism org = new Organism(config, 5);
 			population.add(org);
@@ -129,7 +134,7 @@ public class Genetic {
 		
 		for (Organism org : population) {
 			System.out.println(org.toString());
-			System.out.println(org.fitness);
+			System.out.println("fitness score: " + org.fitness);
 		}
 	}
 	

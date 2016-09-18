@@ -72,6 +72,7 @@ public class IterativeDeepening {
 	 * @param currentDepth	current depth of the tree, incremented by one 
 	 * 						each time the function is called recursively  
 	 */
+	@SuppressWarnings("unchecked")
 	private int loop(int val, int currentDepth) {
 		ArrayList<Operation> ops = setup.getOperations();
 		
