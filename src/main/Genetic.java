@@ -1,7 +1,7 @@
 package main;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.Random;
 
 public class Genetic {
@@ -40,34 +40,90 @@ public class Genetic {
 			for (Operation op : ops) {
 				proximity = op.execute(proximity);
 			}
+			System.out.println("Proximity: " + proximity);
 			proximity = Math.abs(config.getEndVal() - proximity);
-			fitness = 100.0 / ((proximity * ops.size()) + ops.size());
+			fitness = 1 / (proximity + ops.size());
 		}
 		
 		public void mutate() {
 			Random random = new Random();
-			if (random.nextFloat() <= (1.0 / 3.0)) { //1 third chance
+			if (random.nextFloat() <= (1.0 / 3.0) && ops.size() > 0) { //1 third chance
 				//change last operation
 				ops.remove(ops.size() - 1); //removes last op
 				ops.add(config.getOperations().get(random.nextInt(config.getOperations().size()))); //adds random new operation to ops
 				//essentially changes last operation
-			} else if (random.nextBoolean()) { //1 third chance
+			} else if (random.nextBoolean() && ops.size() > 0) { //1 third chance
+				//remove operation
+				ops.remove(ops.size() - 1); //removes last op
+			} else { //1 third chance
 				//add operation
 				ops.add(config.getOperations().get(random.nextInt(config.getOperations().size()))); //adds random new operation to ops
-			} else { //1 third chance
-				//remove operation
-				//TODO this should not allow organism to shrink to size 0...or should it?
-				ops.remove(ops.size() - 1); //removes last op
 			}
 			
 			calculateFitness();
 		}
 		
-		public Organism spawn(Organism mate) {
-			//TODO this needs a crossover function
-			Organism ret = new Organism(config, ops);
-			ret.mutate();
-			return ret;
+		public ArrayList<Organism> spawn(Organism mate) {
+			// Creates the two new children as copies of the parents initially
+			Organism child1 = new Organism(this.config, this.ops);
+			Organism child2 = new Organism(mate.config, mate.ops);
+			
+			// Initializes the random number generator and retrieves organism sizes
+			Random randGen = new Random();
+			int orgSize = this.ops.size();
+			int mateSize = mate.ops.size();
+			
+			// Generates cross-over points, the points are both inclusive e.g. 4 is the 5th item in the array
+			System.out.println("Size of local: " + orgSize + ", Size of mate: " + mateSize);
+			
+			int crossOrg1 = orgSize <= 1 ? 0 : randGen.nextInt(orgSize - 1);
+			int crossOrg2 = orgSize - 1; //randGen.nextInt((orgSize - 1) - crossOrg1) + crossOrg1;
+			
+			int crossMate1 = mateSize <= 1 ? 0 : randGen.nextInt(mateSize - 1);
+			int crossMate2 = mateSize - 1; //randGen.nextInt((mateSize - 1) - crossMate1) + crossMate1;
+
+			System.out.println("crossOrg1: " + crossOrg1 + ", crossOrg2: " + crossOrg2);
+			System.out.println("crossMate1: " + crossMate1 + ", crossMate2: " + crossMate2);
+			
+			// Retrieves the subsets of operations from the generated cross-overs and deletes them from children
+			ArrayList<Operation> subsetOrg = new ArrayList<Operation>();
+			ArrayList<Operation> subsetMate = new ArrayList<Operation>();
+			
+			for (int i = crossOrg1; i <= crossOrg2; ++i) {
+				subsetOrg.add(this.ops.get(i));
+				child1.ops.remove(crossOrg1);
+			}
+			
+			for (int i = crossMate1; i <= crossMate2; ++i) {
+				subsetMate.add(mate.ops.get(i));
+				child2.ops.remove(crossMate1);
+			}
+			
+			// Splice subsets into the children
+			child1.ops.addAll(crossOrg1, subsetMate);
+			child2.ops.addAll(crossMate1, subsetOrg);
+			System.out.println(child2.toString());
+			
+			// Mutate those children muahahahahahahaha
+			child1.mutate();
+			child2.mutate();
+			System.out.println(child2.toString());
+			
+			// Create an array to hold the children and return
+			ArrayList<Organism> children = new ArrayList<Organism>();
+			
+			// Check if either of the children has a NaN fitness score
+			if (!Double.isNaN(child1.fitness)) {
+				children.add(child1);
+			}
+			
+			if (!Double.isNaN(child2.fitness)) {
+				children.add(child2);
+			}
+			
+			System.out.println("====");
+			
+			return children;
 		}
 		
 		@Override
@@ -85,60 +141,134 @@ public class Genetic {
 	
 	private Configuration config;
 	private ArrayList<Organism> population;
+	private ArrayList<Double> accNormFit;
 	private Organism best = null;
 
 	Genetic(Configuration config) {
 		this.config = config;
+		
+		// Create a priority queue that sorts organisms by their fitness scores
+		population = new ArrayList<Organism>();
+		
+		// Initialize our accumulated normal fitness array
+		accNormFit = new ArrayList<Double>();
+		
+		// Create a seed population
+		initPopulation();
 	}
 	
 	public void run() {
-		double startTime = (new Date()).getTime(); //used for timer
-		
-		initPopulation(config);
-		
-		for (int i = 0; i < 6; i++) {
-			System.out.println("\n[INFO] new generation");
+		while (best.proximity != 0) {
+			computeAccumulatedNormalFitness();
 			ArrayList<Organism> newGen = new ArrayList<Organism>();
-			for (Organism org : population) {
-				Organism newOrg = new Organism(org.config, org.ops);
-				newOrg.mutate();
-				newGen.add(newOrg);
-				if (best == null || (newOrg.fitness > best.fitness)) {
-					best = newOrg;
-				}
-			}
-			for (Organism org : newGen) {
-				population.add(org);
+			
+			// Create a new generation of equal size as the original
+			while (newGen.size() < population.size()) {
+				Organism[] parents = getParents();
+				
+				// Adds two children
+				newGen.addAll(parents[0].spawn(parents[1]));
 			}
 			
-			for (Organism org : population) {
+			// Sort the new generation
+			newGen.sort(new Comparator<Organism>() {
+				@Override
+				public int compare(Organism org1, Organism org2) {
+					return (int)(org1.fitness - org2.fitness);
+				}
+			});
+			
+			for (Organism org : newGen) {
 				System.out.println(org.toString());
-				System.out.println(org.fitness);
 			}
+			
+			population = newGen;
+			best = population.get(0);
 		}
 		
-		System.out.println("\nBest organism: " + best.toString());
-		System.out.println(best.fitness);
+		System.out.println("ALL DONE");
+		System.out.println(best.toString());
 	}
 	
-	private void initPopulation(Configuration config) {
-		population = new ArrayList<Organism>();
-		
-		for (int i = 0; i < 1; i++) {
-			Organism org = new Organism(config, 5);
+	private void initPopulation() {
+		// Create an even number of population if you don't want one lonely member of the original bunch to not
+		// reproduce and die out which would be sad poor little organism :(
+		for (int i = 0; i < 6; i++) {
+			// If the organism has an invalid operator sequence, ignore it and make a new one
+			Organism org;
+			do {
+				org = new Organism(this.config, 5);
+			} while(Double.isNaN(org.fitness));
+			
 			population.add(org);
-			if (best == null || (org.fitness > best.fitness)) {
-				best = org;
-			}
 		}
+		
+		// Sort the initial population by fitness
+		population.sort(new Comparator<Organism>() {
+			@Override
+			public int compare(Organism org1, Organism org2) {
+				if (org1.fitness < org2.fitness) {
+					return 1;
+				}
+				else if (org1.fitness == org2.fitness) {
+					return 0;
+				} else {
+					return -1;
+				}
+			}
+		});
+		
+		best = population.get(0);
 		
 		for (Organism org : population) {
 			System.out.println(org.toString());
-			System.out.println("fitness score: " + org.fitness);
+			System.out.println(org.fitness);
 		}
 	}
 	
-	private Organism selectParent() {
-		return null;
+	/**
+	 * Takes the population and returns an array corresponding to each organism's accumulated normal fitness. 
+	 * The population must be sorted in advance.
+	 * 
+	 * @return An ArrayList where each value corresponds to the ANF of the organism at that index in the queue
+	 */
+	private void computeAccumulatedNormalFitness() {
+		// Reset our accumulated normal fitness array
+		accNormFit.clear();
+		
+		// Compute normalization constant
+		double normConst = 0;
+		for (Organism org : population) {
+			normConst += org.fitness;
+		}
+		
+		// Compute ANF in a single loop since the pop's sorted
+		double acc = 0;
+		for (Organism org : population) {
+			acc += (double)org.fitness / (double)normConst;
+			accNormFit.add(acc);	
+		}
+	}
+	
+	/**
+	 * Picks two random members of the population based on the distributions
+	 * from the accumulated normal fitness
+	 */
+	private Organism[] getParents() {
+		Organism[] parents = new Organism[2];
+		Random randGen = new Random();
+		
+		int firstParentIndex = -1;
+		for (int i = 0; i < 2; ++i) {
+			Double selectionVal = randGen.nextDouble();
+			for (int j = 0; j < accNormFit.size(); ++j) {
+				if (accNormFit.get(j) > selectionVal && j != firstParentIndex) {
+					parents[i] = population.get(j);
+					break;
+				}
+			}
+		}
+		
+		return parents;
 	}
 }
