@@ -2,6 +2,7 @@ package main;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Random;
 
 public class Genetic {
@@ -40,7 +41,9 @@ public class Genetic {
 			for (Operation op : ops) {
 				proximity = op.execute(proximity);
 			}
-			System.out.println("Proximity: " + proximity);
+			
+			//System.out.println("Proximity: " + proximity);
+			
 			proximity = Math.abs(config.getEndVal() - proximity);
 			fitness = 1 / (proximity + ops.size());
 		}
@@ -74,7 +77,7 @@ public class Genetic {
 			int mateSize = mate.ops.size();
 			
 			// Generates cross-over points, the points are both inclusive e.g. 4 is the 5th item in the array
-			System.out.println("Size of local: " + orgSize + ", Size of mate: " + mateSize);
+			//System.out.println("Size of local: " + orgSize + ", Size of mate: " + mateSize);
 			
 			int crossOrg1 = orgSize <= 1 ? 0 : randGen.nextInt(orgSize - 1);
 			int crossOrg2 = orgSize - 1; //randGen.nextInt((orgSize - 1) - crossOrg1) + crossOrg1;
@@ -82,8 +85,8 @@ public class Genetic {
 			int crossMate1 = mateSize <= 1 ? 0 : randGen.nextInt(mateSize - 1);
 			int crossMate2 = mateSize - 1; //randGen.nextInt((mateSize - 1) - crossMate1) + crossMate1;
 
-			System.out.println("crossOrg1: " + crossOrg1 + ", crossOrg2: " + crossOrg2);
-			System.out.println("crossMate1: " + crossMate1 + ", crossMate2: " + crossMate2);
+			//System.out.println("crossOrg1: " + crossOrg1 + ", crossOrg2: " + crossOrg2);
+			//System.out.println("crossMate1: " + crossMate1 + ", crossMate2: " + crossMate2);
 			
 			// Retrieves the subsets of operations from the generated cross-overs and deletes them from children
 			ArrayList<Operation> subsetOrg = new ArrayList<Operation>();
@@ -102,12 +105,12 @@ public class Genetic {
 			// Splice subsets into the children
 			child1.ops.addAll(crossOrg1, subsetMate);
 			child2.ops.addAll(crossMate1, subsetOrg);
-			System.out.println(child2.toString());
+			//System.out.println(child2.toString());
 			
 			// Mutate those children muahahahahahahaha
 			child1.mutate();
 			child2.mutate();
-			System.out.println(child2.toString());
+			//System.out.println(child2.toString());
 			
 			// Create an array to hold the children and return
 			ArrayList<Organism> children = new ArrayList<Organism>();
@@ -121,7 +124,7 @@ public class Genetic {
 				children.add(child2);
 			}
 			
-			System.out.println("====");
+			//System.out.println("====");
 			
 			return children;
 		}
@@ -158,9 +161,20 @@ public class Genetic {
 	}
 	
 	public void run() {
-		while (best.proximity != 0) {
+		double startTime = (new Date()).getTime(); //used for timer
+		double endTime = (new Date()).getTime();
+		
+		int generations = 1; //keep track of the number of generations
+		
+		Organism runningBest = null;
+			
+		while (best.proximity != 0 && (endTime - startTime) < (config.getTimeLimit()*1000)) {
+System.out.println("loop");
+System.out.println(endTime);
+System.out.println(startTime);
 			computeAccumulatedNormalFitness();
 			ArrayList<Organism> newGen = new ArrayList<Organism>();
+			ArrayList<Organism> oldGen = new ArrayList<Organism>();
 			
 			// Create a new generation of equal size as the original
 			while (newGen.size() < population.size()) {
@@ -171,29 +185,97 @@ public class Genetic {
 			}
 			
 			// Sort the new generation
-			newGen.sort(new Comparator<Organism>() {
-				@Override
-				public int compare(Organism org1, Organism org2) {
-					return (int)(org1.fitness - org2.fitness);
-				}
-			});
+			newGen = sortPopulation(newGen);
 			
+			//culling
+			population.clear(); //out goes the old generation
+			
+			//in comes the new generation (top half of the children)	
+			for(int i = 0; i < newGen.size()/2; i++)
+				population.add(newGen.get(i));
+			
+			
+			elitism();
+			
+			/*
 			for (Organism org : newGen) {
 				System.out.println(org.toString());
 			}
+			*/
 			
 			population = newGen;
 			best = population.get(0);
+			
+			//update tracking values;
+
+			endTime = (new Date()).getTime();
+			generations++;
+						
+			if(runningBest != null){
+				if(best.proximity < runningBest.proximity)
+					runningBest = best;
+			}else{
+				runningBest = best;
+			}
 		}
 		
-		System.out.println("ALL DONE");
-		System.out.println(best.toString());
+		
+		
+		int tempVal = (int)config.getBeginVal();
+		for(Operation op: runningBest.ops){
+			System.out.println(tempVal + " " + op.toString() + " = " + op.execute(tempVal));
+			tempVal = (int)op.execute(tempVal);
+		}
+		System.out.println("Error: " + (Math.abs(config.getEndVal() - tempVal)));
+		System.out.println("Size of organism: " + runningBest.ops.size());
+		System.out.println("Search Required: " + (endTime-startTime)/1000);
+		System.out.println("Generations: " + generations);
+	}
+	
+	public ArrayList<Organism> sortPopulation(ArrayList<Organism> pop){
+		pop.sort(new Comparator<Organism>() {
+			@Override
+			public int compare(Organism org1, Organism org2) {
+				return (int)(org1.fitness - org2.fitness);
+			}
+		});
+		
+		return pop;
+	}
+	
+	/**
+	 * Adds a random population of size 1/4 population and inserts them in order
+	 * 
+	 * @return void
+	 */
+	public void elitism(){
+		ArrayList<Organism> randomOrganisms = new ArrayList<Organism>();
+		
+		for(int i = 0; i < population.size()/4; i++){
+			Organism org;
+			do {
+				org = new Organism(this.config, 5);
+			} while(Double.isNaN(org.fitness));
+			
+			randomOrganisms.add(org);
+		}
+		
+		//insert new organisms into correct spot
+		int placementIndex = 0;
+		for(int i = 0; i < randomOrganisms.size(); i++){
+			while(population.get(placementIndex).fitness > randomOrganisms.get(i).fitness && placementIndex < population.size()-1){
+				placementIndex++;
+			}
+			
+			population.add(placementIndex, randomOrganisms.get(i));
+		}
+		
 	}
 	
 	private void initPopulation() {
 		// Create an even number of population if you don't want one lonely member of the original bunch to not
-		// reproduce and die out which would be sad poor little organism :(
-		for (int i = 0; i < 6; i++) {
+		// reproduce and die out which would be sad, poor little organism :(
+		for (int i = 0; i < 5; i++) {
 			// If the organism has an invalid operator sequence, ignore it and make a new one
 			Organism org;
 			do {
@@ -220,10 +302,12 @@ public class Genetic {
 		
 		best = population.get(0);
 		
+		/*
 		for (Organism org : population) {
 			System.out.println(org.toString());
 			System.out.println(org.fitness);
 		}
+		*/
 	}
 	
 	/**
