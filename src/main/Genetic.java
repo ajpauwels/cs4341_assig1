@@ -177,8 +177,7 @@ public class Genetic {
 
 			computeAccumulatedNormalFitness();
 			ArrayList<Organism> newGen = new ArrayList<Organism>();
-			ArrayList<Organism> oldGen = new ArrayList<Organism>();
-
+			
 			// Create a new generation of equal size as the original
 			while (newGen.size() < population.size()) {
 				Organism[] parents = getParents();
@@ -227,18 +226,18 @@ public class Genetic {
 			}
 		}
 
-		int tempVal = (int)config.getBeginVal();
+		double tempVal = config.getBeginVal();
 		if (totalBest != null) {
 			for(Operation op: totalBest.ops){
 				System.out.println(tempVal + " " + op.toString() + " = " + op.execute(tempVal));
-				tempVal = (int)op.execute(tempVal);
+				tempVal = op.execute(tempVal);
 			}
 
 			System.out.println("Error: " + (Math.abs(config.getEndVal() - tempVal)));
 			System.out.println("Size of organism: " + totalBest.ops.size());
 			System.out.println("Search Required: " + (endTime-startTime)/1000);
 			System.out.println("Generations: " + generations);
-		} else {
+		} else { //error handling - just in case
 			System.out.println("[ERROR] No best organism exists");
 			System.out.println("Search Required: " + (endTime-startTime)/1000);
 			System.out.println("Generations: " + generations);
